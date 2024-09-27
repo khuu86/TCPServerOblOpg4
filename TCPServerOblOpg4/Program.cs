@@ -16,7 +16,7 @@ while (true)
     Task.Run(() => HandleClient(socket));
 }
 
-listener.Stop();
+// listener.Stop();
 
 void HandleClient(TcpClient socket)
 {
@@ -36,61 +36,65 @@ void HandleClient(TcpClient socket)
         switch (message)
         {
             case "stop":
-                writer.WriteLine("Goodbye: Closing down Client");
-                writer.Flush();
-                socket.Close();
+                HandleStop(writer, socket);
+                //writer.WriteLine("Goodbye: Closing down Client");
+                //writer.Flush();
+                //socket.Close();
                 break;
 
             case "random":
-                writer.WriteLine("Random number x and y");
-                writer.Flush();
+                HandleRandom(reader, writer);
+                //writer.WriteLine("Random number x and y");
+                //writer.Flush();
 
-                string[] messageA = reader.ReadLine().Split(" ");
-                int x = Int32.Parse(messageA[0]);
-                int y = Int32.Parse(messageA[1]);
-                Console.WriteLine(x);
-                Console.WriteLine(y);
+                //string[] messageA = reader.ReadLine().Split(" ");
+                //int x = Int32.Parse(messageA[0]);
+                //int y = Int32.Parse(messageA[1]);
+                //Console.WriteLine(x);
+                //Console.WriteLine(y);
 
-                int minValue = Math.Min(x, y);
-                int maxValue = Math.Max(x, y);
+                //int minValue = Math.Min(x, y);
+                //int maxValue = Math.Max(x, y);
 
-                Random random = new Random();
-                int n = random.Next(minValue, maxValue + 1); // +1 for at inkludere maxValue i det tilfældige interval: Random.Next()
-                string sn = n.ToString();
-                writer.WriteLine(sn);
-                writer.Flush();
+                //Random random = new Random();
+                //int n = random.Next(minValue, maxValue + 1); // +1 for at inkludere maxValue i det tilfældige interval: Random.Next()
+                //string sn = n.ToString();
+                //writer.WriteLine(sn);
+                //writer.Flush();
                 break;
 
             case "add":
-                writer.WriteLine("Add two numbers");
-                writer.Flush();
+                HandleAdd(reader, writer);
+                //writer.WriteLine("Add two numbers");
+                //writer.Flush();
 
-                string[] messageB = reader.ReadLine().Split(" ");
-                int a = Int32.Parse(messageB[0]);
-                int b = Int32.Parse(messageB[1]);
-                Console.WriteLine(a);
-                Console.WriteLine(b);
+                //string[] messageB = reader.ReadLine().Split(" ");
+                //int a = Int32.Parse(messageB[0]);
+                //int b = Int32.Parse(messageB[1]);
+                //Console.WriteLine(a);
+                //Console.WriteLine(b);
 
-                int sum = a + b;
-                string samletSum = sum.ToString();
-                writer.WriteLine(samletSum);
-                writer.Flush();
+                //int sum = a + b;
+                //string samletSum = sum.ToString();
+                //writer.WriteLine(samletSum);
+                //writer.Flush();
                 break;
 
             case "subtract":
-                writer.WriteLine("Subtract two numbers");
-                writer.Flush();
+                HandleSubtract(reader, writer);
+                //writer.WriteLine("Subtract two numbers");
+                //writer.Flush();
 
-                string[] messageC = reader.ReadLine().Split(" ");
-                int c = Int32.Parse(messageC[0]);
-                int d = Int32.Parse(messageC[1]);
-                Console.WriteLine(c);
-                Console.WriteLine(d);
+                //string[] messageC = reader.ReadLine().Split(" ");
+                //int c = Int32.Parse(messageC[0]);
+                //int d = Int32.Parse(messageC[1]);
+                //Console.WriteLine(c);
+                //Console.WriteLine(d);
 
-                int forskel = c - d;
-                string samletForskel = forskel.ToString();
-                writer.WriteLine(samletForskel);
-                writer.Flush();
+                //int forskel = c - d;
+                //string samletForskel = forskel.ToString();
+                //writer.WriteLine(samletForskel);
+                //writer.Flush();
                 break;
 
             default:
@@ -98,37 +102,70 @@ void HandleClient(TcpClient socket)
                 writer.Flush();
                 break;
         }
-
-
-
-
-
-        //if (message == "stop")
-        //{
-
-        //    writer.WriteLine("Goodbye World");
-        //    writer.Flush();
-        //    socket.Close();
-        //}
-
-        //if (message.Contains("Random"))
-        //{
-
-        //    writer.WriteLine("Random number x and y");
-        //    writer.Flush();
-
-        //    string[] messageA = message.Split(" ");
-        //    int x = Int32.Parse(messageA[0]);
-        //    int y = Int32.Parse(messageA[1]);
-        //    Console.WriteLine(x);
-        //    Console.WriteLine(y);
-
-        //    Random random = new Random();
-        //    int n = random.Next(x, y);
-        //    string sn = n.ToString();
-        //    writer.WriteLine(sn);
-        //    writer.Flush();
-
-        //}
     }
+}
+
+void HandleStop(StreamWriter writer, TcpClient socket)
+{
+    writer.WriteLine("Goodbye: Closing down Client");
+    writer.Flush();
+    socket.Close();
+}
+
+void HandleRandom(StreamReader reader, StreamWriter writer)
+{
+    writer.WriteLine("Random number x and y");
+    writer.Flush();
+
+    string[] messageA = reader.ReadLine().Split(" ");
+    int x = Int32.Parse(messageA[0]);
+    int y = Int32.Parse(messageA[1]);
+    Console.WriteLine(x);
+    Console.WriteLine(y);
+
+    int minValue = Math.Min(x, y);
+    int maxValue = Math.Max(x, y);
+
+    Random random = new Random();
+    int n = random.Next(minValue, maxValue + 1); // +1 for at inkludere maxValue i det tilfældige interval: Random.Next()
+    string sn = n.ToString();
+    writer.WriteLine(sn);
+    writer.Flush();
+}
+
+void HandleAdd(StreamReader reader, StreamWriter writer)
+{
+    writer.WriteLine("Add two numbers");
+    writer.Flush();
+
+    string[] messageB = reader.ReadLine().Split(" ");
+    int a = Int32.Parse(messageB[0]);
+    int b = Int32.Parse(messageB[1]);
+    //Console.WriteLine(a);
+    //Console.WriteLine(b);
+
+    int sum = a + b;
+    string samletSum = sum.ToString();
+
+    Console.WriteLine($"{a} + {b} = {sum}");
+    Console.WriteLine($"resultatet sendt: {samletSum}");
+    writer.WriteLine(samletSum);
+    writer.Flush();
+}
+
+void HandleSubtract(StreamReader reader, StreamWriter writer)
+{
+    writer.WriteLine("Enter 2 numbers with space in between numbers to Subtract");
+    writer.Flush();
+
+    string[] messageC = reader.ReadLine().Split(" ");
+    int c = Int32.Parse(messageC[0]);
+    int d = Int32.Parse(messageC[1]);
+    Console.WriteLine(c);
+    Console.WriteLine(d);
+
+    int forskel = c - d;
+    string samletForskel = forskel.ToString();
+    writer.WriteLine(samletForskel);
+    writer.Flush();
 }
